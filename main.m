@@ -13,6 +13,9 @@ rocket = Rocket(total_delta_v,number_stages,fuel_species,oxidizer_species, ...
     mass_fuel_ratio,area_throat,average_ambient_pressure,chamber_pressure);
 
 rocket = cantera(rocket);
+% rocket.chamber_temperature = 1500;
+% rocket.mixture_gamma = 1.2;
+% rocket.mixture_molecular_weight = 16;
 rocket = quasi_1d(rocket);
 rocket = nozzle_adjust(rocket);
 rocket = multistage(rocket);
@@ -24,16 +27,6 @@ function rocket = cantera(rocket)
 
     % expected outputs: chamber_temperature, mixture_gamma, 
     % mixture_molecular_weight
-end
-
-
-function rocket = quasi_1d(rocket)
-    % valid inputs: chamber_temperature, chamber_pressure, 
-    % average_ambient_pressure, mixture_gamma, mixture_molecular_weight,
-    % area_throat
-
-    % expected outputs: area_exit_ratio, mass_flow_rate, exit_mach_number,
-    % preliminary specific_impulse
 end
 
 function rocket = nozzle_adjust(rocket)

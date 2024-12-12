@@ -5,38 +5,39 @@ classdef Rocket
     properties
         % -------------inputs--------------
         % mission parameters - nonadjustable
-        total_delta_v
+        total_delta_v % m/s
 
         % architecture dependent - basically nonadjustable
         number_stages
         fuel_species
         oxidizer_species
-        average_ambient_pressure % could change to be a vector/range; also 
-        % could change to be calculated somehow, or be a product of thrust
+        average_ambient_pressure % Pa 
+        % could change to be a vector/range; also could change to be 
+        % calculated somehow, or be a product of thrust
 
         % adjustable
         mass_fuel_ratio
-        area_throat
-        chamber_pressure
+        area_throat % m2
+        chamber_pressure % Pa
         % ----------------------------------
         
         % --------cantera outputs-----------
-        chamber_temperature
-        mixture_molecular_weight
+        chamber_temperature % K
+        mixture_molecular_weight % g/mol
         mixture_gamma
         % ----------------------------------
         
         % --------quasi-1D outputs----------
         area_exit_ratio
-        mass_flow_rate
+        mass_flow_rate % kg/s
         exit_mach_number
-        specific_impulse
+        specific_impulse % s
         % ----------------------------------
 
         % ------multistaging outputs--------
         stage_structural_coefficients
         stage_mass_ratios
-        stage_masses
+        stage_masses % kg
     end
 
     methods
