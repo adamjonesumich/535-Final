@@ -22,7 +22,7 @@ function rocket = quasi_1d(rocket)
     exit_area_ratio = 15; %
     combustor_area_ratio = 1; % TODO: what should this be?
 
-    params = NozzleParameters(T0,p0,p_a,MW,y,A_t,exit_area_ratio,combustor_area_ratio,num_points);
+    params = Quasi1DNozzleParameters(T0,p0,p_a,MW,y,A_t,exit_area_ratio,combustor_area_ratio,num_points);
 
     % find area ratio based on perfect expansion pressure ratio
     M_e = find_mach_from_pressure_ratio(params.p0/p_a,y);
@@ -183,7 +183,7 @@ function results = solve_nozzle(params)
     coeff_thrust = thrust / (A_t * p0);
 
     
-    results = NozzleResults(x_l,p_ratio_x,T_ratio_x,M_x,u_x,normal_shock_exists,...
+    results = Quasi1DNozzleResults(x_l,p_ratio_x,T_ratio_x,M_x,u_x,normal_shock_exists,...
         shock_location_index,p0e,mdot,thrust,Isp,coeff_thrust,is_valid);
     
 end
