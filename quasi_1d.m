@@ -9,32 +9,34 @@ function rocket = quasi_1d(rocket)
     % TODO: combustor static conditions, plot enhancements,
     % problem 2: combustor properties
     
-    % native sim variables
-    num_points = 2; % good? 
-    T0 = rocket.chamber_temperature; % K
-    p0 = rocket.chamber_pressure; % Pa
-    p_a = rocket.average_ambient_pressure; % Pa
-    MW = rocket.mixture_molecular_weight; % g/mol
-    MW = 1/1000 * MW; % kg/mol
-    y = rocket.mixture_gamma; % gamma
-    A_t = rocket.area_throat; % m2
+    for i = 1:rocket.number_launch_stages+1
+        % native sim variables
+        num_points = 2; % throat + exit
+        T0 = rocket.chamber_temperature(i); % K
+        p0 = rocket.chamber_pressure(i); % Pa
+        p_a = rocket.average_ambient_pressure(i); % Pa
+        MW = rocket.mixture_molecular_weight(i); % g/mol
+        MW = 1/1000 * MW; % kg/mol
+        y = rocket.mixture_gamma(i); % gamma
+        A_t = rocket.area_throat(i); % m2
+        
+        exit_area_ratio = 1; % completely arbitrary, gets fixed in a couple lines
+        combustor_area_ratio = 1; % TODO: make sure this doesn't matter
     
-    exit_area_ratio = 15; %
-    combustor_area_ratio = 1; % TODO: what should this be?
-
-    params = Quasi1DNozzleParameters(T0,p0,p_a,MW,y,A_t,exit_area_ratio,combustor_area_ratio,num_points);
-
-    % find area ratio based on perfect expansion pressure ratio
-    M_e = find_mach_from_pressure_ratio(params.p0/p_a,y);
-    params.exit_area_ratio = calculate_area_ratio_from_Mach(M_e,y);
-    params = update_area(params);
-
-    results = solve_nozzle(params);
-
-    rocket.area_exit_ratio = params.exit_area_ratio;
-    rocket.mass_flow_rate = results.mdot;
-    rocket.exit_mach_number = results.M_x(end);
-    rocket.specific_impulse = results.Isp;
+        params = Quasi1DNozzleParameters(T0,p0,p_a,MW,y,A_t,exit_area_ratio,combustor_area_ratio,num_points);
+    
+        % find area ratio based on perfect expansion pressure ratio
+        M_e = find_mach_from_pressure_ratio(params.p0/p_a,y);
+        params.exit_area_ratio = calculate_area_ratio_from_Mach(M_e,y);
+        params = update_area(params);
+    
+        results = solve_nozzle(params);
+    
+        rocket.area_exit_ratio(i) = params.exit_area_ratio;
+        rocket.mass_flow_rate(i) = results.mdot;
+        rocket.exit_mach_number(i) = results.M_x(end);
+        rocket.specific_impulse(i) = results.Isp;
+    end
 end
 
 
@@ -79,25 +81,29 @@ function results = solve_nozzle(params)
     tol = 5e-5;
     if abs(exit_pressure_ratio-lower_bound_pressure_ratio) < tol
         disp("Perfectly expanded flow.")
-    elseif lower_bound_pressure_ratio > exit_pressure_ratio
-        disp("Underexpanded flow.");
-    elseif lower_bound_pressure_ratio_with_ns_at_exit > exit_pressure_ratio
-        disp("Overexpanded flow with oblique shocks at exit.");
-    elseif abs(exit_pressure_ratio-lower_bound_pressure_ratio_with_ns_at_exit) < 1e-5
-        disp("Overexpanded flow with normal shock at exit.");
-        is_valid = false;
-        shock_location_index = length(x_l_d);
-        normal_shock_exists = true;
-    elseif upper_bound_pressure_ratio > exit_pressure_ratio
-        disp("Overexpanded flow with normal shock within nozzle.");
-        shock_location_index = find_normal_shock(area_ratio_d,y,exit_pressure_ratio,exit_area_ratio);
-        normal_shock_exists = true;
-        is_valid = false;
     else
-        disp("Insufficient pressure differential to generate supersonic flow.");
-        is_diverging_subsonic = true;
-        is_valid = false;
+        if lower_bound_pressure_ratio > exit_pressure_ratio
+            disp("Underexpanded flow.");
+        elseif lower_bound_pressure_ratio_with_ns_at_exit > exit_pressure_ratio
+            disp("Overexpanded flow with oblique shocks at exit.");
+        elseif abs(exit_pressure_ratio-lower_bound_pressure_ratio_with_ns_at_exit) < 1e-5
+            disp("Overexpanded flow with normal shock at exit.");
+            is_valid = false;
+            shock_location_index = length(x_l_d);
+            normal_shock_exists = true;
+        elseif upper_bound_pressure_ratio > exit_pressure_ratio
+            disp("Overexpanded flow with normal shock within nozzle.");
+            shock_location_index = find_normal_shock(area_ratio_d,y,exit_pressure_ratio,exit_area_ratio);
+            normal_shock_exists = true;
+            is_valid = false;
+        else
+            disp("Insufficient pressure differential to generate supersonic flow.");
+            is_diverging_subsonic = true;
+            is_valid = false;
+        end
     end
+        
+    
     
     % calculate distributions
 
