@@ -5,11 +5,16 @@ function rocket = multistage(rocket)
     g0 = 9.807;
 
     
-    Isp = rocket.specific_impulse(1:end);
+    ISP = rocket.specific_impulse(1:end);
+    % I assume ISP is a 3-element column vector (1 element for each stage)? 
+    % If not, this needs to be changed
 
     % here, I just manually inputs what the structural coefficients are;
     % this needs to be replaced with a loop that looks up e_i based on the
     % value of R_i
+
+    % We do need an initial guess based on how this is set up, 
+    % so should I leave the preset epsilons here?
     
     e1 = 0.032;
     e2 = 0.035;
@@ -19,9 +24,9 @@ function rocket = multistage(rocket)
     e_residual = e;
     tol = 1e-4;
 
-    do_loop = true;
+    %do_loop = true;
     while(do_loop | norm(e_residual,Inf) > tol) % TODO: remove "do_loop"
-        do_loop = false;
+        %do_loop = false;
         
         % -----------lagrange multiplier math--------------
         % the Lagrange system forms a set of 4 equations in 4 unknowns; I
@@ -67,7 +72,7 @@ function rocket = multistage(rocket)
 
 
         e_prev = e;
-        e = fetch_e(Rs); %TODO: MAKE THIS A REAL FUNCTION.
+        e = fetch_e(Rs,ISP);
 
         e_residual = e - e_prev;
 
@@ -117,6 +122,30 @@ end
 
 
 
-function e = fetch_e(R)
-    e = zeros(size(R)) + 0.04;
+function e = fetch_e(R,ISP)
+    % Inputs:
+    %    R = Initial to burn-out mass ratio of each stage, vector
+    %    ISP = Specific impulse of each stage, vector
+
+    % Outputs:
+    %    e = structural coefficients for each stage, vector
+
+    % Need to convert R1,R2,R3 into delta v
+    g0 = 9.807;
+    dv1 = g0*ISP(1)*log(R(1));
+    dv2 = g0*ISP(2)*log(R(2));
+    dv3 = g0*ISP(3)*log(R(3));
+    
+    % Curve fits for epsilon as a function of x, where x = delta v
+    %H2fit = [91.3825   -1.0164    0.0586];
+    HCfit = [76.7767   -1.1191    0.0266];
+    %epsfunc_H2 = @(x)H2fit(1)*x.^H2fit(2)+H2fit(3); % H2 fuel
+    epsfunc_HC = @(x)HCfit(1)*x.^HCfit(2)+HCfit(3); % Hydrocarbon fuel
+
+    e1 = epsfunc_HC(dv1)
+    e2 = epsfunc_HC(dv2)
+    e3 = epsfunc_HC(dv3)
+    e = [e1;e2;e3];
+    
+    %e = zeros(size(R)) + 0.04; % ?
 end
