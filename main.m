@@ -19,22 +19,13 @@ rocket = Rocket(total_delta_v,upper_stage_mass,number_launch_stages,fuel_species
 rocket = cantera(rocket);
 
     % for testing purposes: fake cantera!
-    rocket.chamber_temperature = [1500; 1600; 1700; 1700];
-    rocket.mixture_gamma = [1.2; 1.15; 1.1; 1.1];
-    rocket.mixture_molecular_weight = [18; 17; 16; 16];
+    % rocket.chamber_temperature = [1500; 1600; 1700; 1700];
+    % rocket.mixture_gamma = [1.2; 1.15; 1.1; 1.1];
+    % rocket.mixture_molecular_weight = [18; 17; 16; 16];
 
 rocket = quasi_1d(rocket);
 rocket = nozzle_adjust(rocket);
 rocket = multistage(rocket);
-
-
-function rocket = cantera(rocket)
-    % valid inputs: chamber_pressure, fuel_species, oxidizer_species,
-    % mass_fuel_ratio
-
-    % expected outputs: chamber_temperature, mixture_gamma, 
-    % mixture_molecular_weight
-end
 
 function rocket = nozzle_adjust(rocket)
     % valid inputs: all thermodynamic variables
