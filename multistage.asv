@@ -15,16 +15,16 @@ function rocket = multistage(rocket)
     % We do need an initial guess based on how this is set up, 
     % so should I leave the preset epsilons here?
     
-    e1 = 0.032;
-    e2 = 0.035;
-    e3 = 0.055;
-    e = [e1;e2;e3];
+    e_1 = 0.032;
+    e_2 = 0.035;
+    e_3 = 0.055;
+    e = [e_1;e_2;e_3];
 
     e_residual = e;
     tol = 1e-4;
 
     %do_loop = true;
-    while(do_loop | norm(e_residual,Inf) > tol) % TODO: remove "do_loop"
+    while(do_loop || norm(e_residual,Inf) > tol) % TODO: remove "do_loop"
         %do_loop = false;
         
         % -----------lagrange multiplier math--------------
@@ -118,30 +118,29 @@ function rocket = multistage(rocket)
     rocket.stage_delta_vs = dvs;
 
     function e = fetch_e(R,ISP)
-    % Inputs:
-    %    R = Initial to burn-out mass ratio of each stage, vector
-    %    ISP = Specific impulse of each stage, vector
-
-    % Outputs:
-    %    e = structural coefficients for each stage, vector
-
-    % Need to convert R1,R2,R3 into delta v
-    g0 = 9.807;
-    dv1 = g0*ISP(1)*log(R(1));
-    dv2 = g0*ISP(2)*log(R(2));
-    dv3 = g0*ISP(3)*log(R(3));
+        % Inputs:
+        %    R = Initial to burn-out mass ratio of each stage, vector
+        %    ISP = Specific impulse of each stage, vector
     
-    % Curve fits for epsilon as a function of x, where x = delta v
-    %H2fit = [91.3825   -1.0164    0.0586];
-    HCfit = [76.7767   -1.1191    0.0266];
-    %epsfunc_H2 = @(x)H2fit(1)*x.^H2fit(2)+H2fit(3); % H2 fuel
-    epsfunc_HC = @(x)HCfit(1)*x.^HCfit(2)+HCfit(3); % Hydrocarbon fuel
-
-    e1 = epsfunc_HC(dv1);
-    e2 = epsfunc_HC(dv2);
-    e3 = epsfunc_HC(dv3);
-    e = [e1;e2;e3];
+        % Outputs:
+        %    e = structural coefficients for each stage, vector
     
-    %e = zeros(size(R)) + 0.04; % ?
-end
+        % Need to convert R1,R2,R3 into delta v
+        dv1 = 9.807*ISP(1)*log(R(1));
+        dv2 = 9.807*ISP(2)*log(R(2));
+        dv3 = 9.807*ISP(3)*log(R(3));
+        
+        % Curve fits for epsilon as a function of x, where x = delta v
+        %H2fit = [91.3825   -1.0164    0.0586];
+        HCfit = [76.7767   -1.1191    0.0266];
+        %epsfunc_H2 = @(x)H2fit(1)*x.^H2fit(2)+H2fit(3); % H2 fuel
+        epsfunc_HC = @(x)HCfit(1)*x.^HCfit(2)+HCfit(3); % Hydrocarbon fuel
+    
+        e1 = epsfunc_HC(dv1);
+        e2 = epsfunc_HC(dv2);
+        e3 = epsfunc_HC(dv3);
+        e = [e1;e2;e3];
+        
+        %e = zeros(size(R)) + 0.04; % ?
+    end
 end

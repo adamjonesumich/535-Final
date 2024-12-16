@@ -6,7 +6,8 @@ function rocket = multistage(rocket)
 
     
     Isp = rocket.specific_impulse(1:end);
-    ISP = Isp(1:rocket.number_stages); % lower stages Isp
+    Isp = [300; 350; 350; 400];
+    ISP = Isp(1:rocket.number_launch_stages); % lower stages Isp
 
     % here, I just manually inputs what the structural coefficients are;
     % this needs to be replaced with a loop that looks up e_i based on the
@@ -15,16 +16,16 @@ function rocket = multistage(rocket)
     % We do need an initial guess based on how this is set up, 
     % so should I leave the preset epsilons here?
     
-    e1 = 0.032;
-    e2 = 0.035;
-    e3 = 0.055;
-    e = [e1;e2;e3];
+    e_1 = 0.032;
+    e_2 = 0.035;
+    e_3 = 0.055;
+    e = [e_1;e_2;e_3];
 
     e_residual = e;
     tol = 1e-4;
 
     %do_loop = true;
-    while(do_loop | norm(e_residual,Inf) > tol) % TODO: remove "do_loop"
+    while(norm(e_residual,Inf) > tol) % TODO: remove "do_loop"
         %do_loop = false;
         
         % -----------lagrange multiplier math--------------

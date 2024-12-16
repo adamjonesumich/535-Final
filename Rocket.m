@@ -12,7 +12,8 @@ classdef Rocket
         number_launch_stages 
         fuel_species
         oxidizer_species
-        average_ambient_pressure % Pa 
+        lowest_ambient_pressure % Pa 
+        highest_ambient_pressure % Pa
         % could change to be a vector/range; also could change to be 
         % calculated somehow, or be a product of thrust
 
@@ -44,7 +45,7 @@ classdef Rocket
     end
 
     methods
-        function obj = Rocket(total_delta_v,upper_stage_mass,number_stages,fuel_species,oxidizer_species,mass_fuel_ratio,area_throat,average_ambient_pressure,chamber_pressure)
+        function obj = Rocket(total_delta_v,upper_stage_mass,number_stages,fuel_species,oxidizer_species,mass_fuel_ratio,area_throat,lowest_ambient_pressure,highest_ambient_pressure,chamber_pressure)
             %Rocket Construct an instance of this class
             %   Detailed explanation goes here
             obj.total_delta_v = total_delta_v;
@@ -54,7 +55,8 @@ classdef Rocket
             obj.oxidizer_species = oxidizer_species;
             obj.mass_fuel_ratio = mass_fuel_ratio;
             obj.area_throat = area_throat;
-            obj.average_ambient_pressure = average_ambient_pressure;
+            obj.lowest_ambient_pressure = lowest_ambient_pressure;
+            obj.highest_ambient_pressure = highest_ambient_pressure;
             obj.chamber_pressure = chamber_pressure;
 
             obj.chamber_temperature = NaN;

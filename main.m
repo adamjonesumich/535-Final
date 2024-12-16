@@ -23,8 +23,9 @@ rocket = cantera(rocket);
     rocket.mixture_gamma = [1.2; 1.15; 1.1; 1.1];
     rocket.mixture_molecular_weight = [18; 17; 16; 16];
 
-rocket = quasi_1d(rocket);
+rocket = quasi_1d(rocket,false);
 rocket = nozzle_adjust(rocket);
+rocket = quasi_1d(rocket,true);
 rocket = multistage(rocket);
 
 
