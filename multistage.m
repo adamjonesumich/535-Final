@@ -5,8 +5,7 @@ function rocket = multistage(rocket)
     g0 = 9.807;
 
     
-    Isp = rocket.specific_impulse(1:end);
-    Isp = [300; 350; 350; 400];
+    Isp = rocket.specific_impulse_sea_level(1:end);
     ISP = Isp(1:rocket.number_launch_stages); % lower stages Isp
 
     % here, I just manually inputs what the structural coefficients are;
@@ -98,7 +97,7 @@ function rocket = multistage(rocket)
     % upper stage math
     
     dv_upper = rocket.total_delta_v(end);
-    Isp_upper = rocket.specific_impulse(end);
+    Isp_upper = rocket.specific_impulse_sea_level(end);
     m_pl_upper = rocket.upper_stage_mass;
     e_upper = 0.067; % TODO: fix with real value
     

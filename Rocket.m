@@ -14,7 +14,7 @@ classdef Rocket
         oxidizer_species
         lowest_ambient_pressure % Pa 
         highest_ambient_pressure % Pa
-        % could change to be a vector/range; also could change to be 
+        % could change to be 
         % calculated somehow, or be a product of thrust
 
         % adjustable
@@ -33,11 +33,14 @@ classdef Rocket
         area_exit_ratio
         mass_flow_rate % kg/s
         exit_mach_number
-        specific_impulse % s
+        specific_impulse_vacuum % s
+        thrust_vacuum; % N
         % ----------------------------------
         
         % ----------nozzle adjust-----------
         correction_factor
+        specific_impulse_sea_level % s
+        thrust_sea_level % N
         % ----------------------------------
         
         % ------multistaging outputs--------
@@ -70,9 +73,12 @@ classdef Rocket
             obj.area_exit_ratio = NaN;
             obj.mass_flow_rate = NaN;
             obj.exit_mach_number = NaN;
-            obj.specific_impulse = NaN;
+            obj.specific_impulse_vacuum = NaN;
+            obj.thrust_vacuum = NaN;
 
             obj.correction_factor = NaN;
+            obj.specific_impulse_sea_level = NaN;
+            obj.thrust_sea_level = NaN;
             
             obj.stage_payload_ratios = NaN;
             obj.stage_mass_ratios = NaN;

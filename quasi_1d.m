@@ -1,4 +1,4 @@
-function rocket = quasi_1d(rocket,fix_area)
+function rocket = quasi_1d(rocket)
     % valid inputs: chamber_temperature, chamber_pressure, 
     % average_ambient_pressure, mixture_gamma, mixture_molecular_weight,
     % area_throat
@@ -14,34 +14,28 @@ function rocket = quasi_1d(rocket,fix_area)
         num_points = 2; % throat + exit
         T0 = rocket.chamber_temperature(i); % K
         p0 = rocket.chamber_pressure(i); % Pa
-        p_a = rocket.lowest_ambient_pressure(i); % Pa
+        p_a = rocket.highest_ambient_pressure(i); % Pa
         MW = rocket.mixture_molecular_weight(i); % g/mol
         MW = 1/1000 * MW; % kg/mol
         y = rocket.mixture_gamma(i); % gamma
         A_t = rocket.area_throat(i); % m2
         
-        if(fix_area)
-            exit_area_ratio = rocket.area_exit_ratio; 
-        else
-            exit_area_ratio = 1; % completely arbitrary, gets fixed in a couple lines
-        end
+        exit_area_ratio = 1; % completely arbitrary, gets fixed in a couple lines
+        
         combustor_area_ratio = 1; % TODO: make sure this doesn't matter
     
         params = Quasi1DNozzleParameters(T0,p0,p_a,MW,y,A_t,exit_area_ratio,combustor_area_ratio,num_points);
     
         % find area ratio based on perfect expansion pressure ratio
-        if(~fix_area)
-            M_e = find_mach_from_pressure_ratio(params.p0/p_a,y);
-            params.exit_area_ratio = calculate_area_ratio_from_Mach(M_e,y);
-            params = update_area(params);
-        end
+        M_e = find_mach_from_pressure_ratio(params.p0/p_a,y);
+        params.exit_area_ratio = calculate_area_ratio_from_Mach(M_e,y);
+        params = update_area(params);
+        
         
         results = solve_nozzle(params);
-        
-        if(~fix_area)
-            rocket.area_exit_ratio(i) = params.exit_area_ratio;
-            rocket.specific_impulse(i) = results.Isp;
-        end
+        rocket.area_exit_ratio(i) = params.exit_area_ratio;
+        rocket.specific_impulse_sea_level(i) = results.Isp;
+        rocket.thrust_sea_level(i) = results.thrust;
         rocket.mass_flow_rate(i) = results.mdot;
         rocket.exit_mach_number(i) = results.M_x(end);
     end
