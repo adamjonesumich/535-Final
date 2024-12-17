@@ -11,6 +11,7 @@ lowest_ambient_pressure = [0, 0, 0, 0]; % Pa
 highest_ambient_pressure = [101325, 100, 0, 0]; % Pa
 
 % adjustables
+<<<<<<< HEAD
 number_engines_per_stage = [27, 11, 5, 1];
 area_throat_launch = 0.01; % m2
 area_throat_upper = 0.001; % m2
@@ -25,6 +26,14 @@ area_throat = [area_throat_launch*ones(1,3),area_throat_upper];
 mass_fuel_ratio = [mass_fuel_ratio_launch*ones(1,3),mass_fuel_ratio_upper];
 ideal_chamber_pressure = [ideal_chamber_pressure_launch*ones(1,3),ideal_chamber_pressure_upper];
 combustion_area_ratio = [combustion_area_ratio_launch*ones(1,3),combustion_area_ratio_upper]; 
+=======
+area_throat = [0.063, 0.050, 0.063, 0.001]; % m2
+mass_fuel_ratio = [2.90, 2.95, 2.95, 2.97];
+highest_ambient_pressure = [101325, 0, 0, 0]; % Pa
+ideal_chamber_pressure = [52, 52, 52, 60] * 1e6; % Pa
+combustion_area_ratio = [2,1,1,1];
+        
+>>>>>>> a3cabf859b10b7d23d841452ce532af95fb653f4
 
 % struct to hold data between function calls
 rocket = Rocket(total_delta_v,upper_stage_mass,number_launch_stages, ...
