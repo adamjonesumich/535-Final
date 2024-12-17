@@ -42,7 +42,6 @@ for i = 1:rocket.number_launch_stages+1
     l = L15 * input("");
 
     % rocket.correction_factor(i) = .974;
-    y = rocket.mixture_gamma(i);
     Ac_At = rocket.combustion_area_ratio(i);
     p_c = rocket.ideal_chamber_pressure(i);
     
