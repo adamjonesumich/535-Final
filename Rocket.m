@@ -35,7 +35,11 @@ classdef Rocket
         exit_mach_number
         specific_impulse % s
         % ----------------------------------
-
+        
+        % ----------nozzle adjust-----------
+        correction_factor
+        % ----------------------------------
+        
         % ------multistaging outputs--------
         stage_payload_ratios
         stage_mass_ratios
@@ -67,6 +71,8 @@ classdef Rocket
             obj.mass_flow_rate = NaN;
             obj.exit_mach_number = NaN;
             obj.specific_impulse = NaN;
+
+            obj.correction_factor = NaN;
             
             obj.stage_payload_ratios = NaN;
             obj.stage_mass_ratios = NaN;
