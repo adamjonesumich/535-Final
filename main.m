@@ -4,7 +4,7 @@ total_delta_v = [8000,9600]; % m/s
 upper_stage_mass = 5000; % kg
 number_launch_stages = 3; 
 %number_engines_per_stage = [1, 1, 1, 1];
-number_engines_per_stage = [3, 1, 1, 1];
+number_engines_per_stage = [5, 3, 1, 1];
 max_area_ratio = 200;
 max_exit_area = 40; % TBD
 fuel_species = "CH4";
@@ -12,7 +12,7 @@ oxidizer_species = "O2";
 lowest_ambient_pressure = [0, 0, 0, 0]; % Pa
 
 % adjustables
-area_throat = [0.063, 0.063, 0.063, 0.001]; % m2
+area_throat = [0.063, 0.050, 0.063, 0.001]; % m2
 mass_fuel_ratio = [2.90, 2.95, 2.95, 2.97];
 highest_ambient_pressure = [101325, 0, 0, 0]; % Pa
 ideal_chamber_pressure = [52, 52, 52, 60] * 1e6; % Pa
