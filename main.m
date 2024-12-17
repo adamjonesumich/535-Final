@@ -3,19 +3,21 @@
 total_delta_v = [8000,9600]; % m/s
 upper_stage_mass = 5000; % kg
 number_launch_stages = 3; 
-number_engines_per_stage = [1, 1, 1, 1];
+%number_engines_per_stage = [1, 1, 1, 1];
+number_engines_per_stage = [9, 1, 1, 1];
 max_area_ratio = 200;
 max_exit_area = 40; % TBD
 fuel_species = "CH4";
 oxidizer_species = "O2";
-area_throat = [0.2, 0.2, 0.2, 0.2]; % m2
+%area_throat = [0.5, 0.05, 0.01, 0.01]; % m2
+area_throat = [0.05, 0.05, 0.01, 0.001]; % m2
 lowest_ambient_pressure = [0, 0, 0, 0]; % Pa
 
 % adjustables
-mass_fuel_ratio = [3.8, 3.8, 3.8, 3.8];
+mass_fuel_ratio = [3.8, 3.8, 3.7, 3.8];
 highest_ambient_pressure = [101325, 10, 0, 0]; % Pa
-ideal_chamber_pressure = [60, 55, 30, 30] * 1e6; % Pa
-combustion_area_ratio = [2.5,2,1.5,1];
+ideal_chamber_pressure = [60, 55, 50, 50] * 1e6; % Pa
+combustion_area_ratio = [2.5,2,2,1];
         
 
 % struct to hold data between function calls

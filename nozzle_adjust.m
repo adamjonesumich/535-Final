@@ -36,7 +36,7 @@ for i = 1:rocket.number_launch_stages+1
     i,rocket.area_exit_ratio(i), L15(i), L_full(i));
     
     %rocket.correction_factor(i) = input("");
-    rocket.correction_factor(i) = .99;
+    rocket.correction_factor(i) = .974;
 
 end
 

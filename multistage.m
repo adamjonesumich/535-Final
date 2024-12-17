@@ -98,7 +98,7 @@ function rocket = multistage(rocket)
     
     dv_upper = rocket.total_delta_v(end);
     Isp_upper = rocket.specific_impulse_sea_level(end);
-    m_pl_upper = rocket.upper_stage_mass + rocket.combustion_chamber_mass(end) + rocket.nozzle_mass(end);
+    m_pl_upper = rocket.upper_stage_mass + (rocket.combustion_chamber_mass(end) + rocket.nozzle_mass(end)) * rocket.number_engines_per_stage(end);
     e_upper = fetch_e_from_dv(dv_upper); % TODO: fix with real value
     
     C = exp(-dv_upper/(Isp_upper*g0));
@@ -109,13 +109,15 @@ function rocket = multistage(rocket)
     m_upper = m_pl_upper+m_p_upper+m_s_upper;
     ms = [0;0;0;m_upper];
     for i = 3:-1:1
-        ms(i) = ms(i+1)*(prs(i)+1)/prs(i) + rocket.combustion_chamber_mass(i) + rocket.nozzle_mass(i);
+        ms(i) = ms(i+1)*(prs(i)+1)/prs(i) + (rocket.combustion_chamber_mass(i) + rocket.nozzle_mass(i))  * rocket.number_engines_per_stage(i);
     end
 
     rocket.stage_payload_ratios = prs;
     rocket.stage_mass_ratios = Rs;
     rocket.stage_masses = ms;
     rocket.stage_delta_vs = dvs;
+    rocket.thrust_vacuum = rocket.thrust_vacuum .* rocket.number_engines_per_stage;
+    rocket.thrust_sea_level = rocket.thrust_sea_level .* rocket.number_engines_per_stage;
 
     function e = fetch_e(R,ISP)
         % Inputs:
