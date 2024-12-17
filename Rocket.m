@@ -10,6 +10,9 @@ classdef Rocket
 
         % architecture dependent - basically nonadjustable
         number_launch_stages 
+        number_engines_per_stage
+        max_area_ratio
+        max_exit_area
         fuel_species
         oxidizer_species
         lowest_ambient_pressure % Pa 
@@ -52,12 +55,15 @@ classdef Rocket
     end
 
     methods
-        function obj = Rocket(total_delta_v,upper_stage_mass,number_stages,fuel_species,oxidizer_species,mass_fuel_ratio,area_throat,lowest_ambient_pressure,highest_ambient_pressure,chamber_pressure)
+        function obj = Rocket(total_delta_v,upper_stage_mass,number_launch_stages,number_engines_per_stage,max_area_ratio,max_exit_area,fuel_species,oxidizer_species,mass_fuel_ratio,area_throat,lowest_ambient_pressure,highest_ambient_pressure,chamber_pressure)
             %Rocket Construct an instance of this class
             %   Detailed explanation goes here
             obj.total_delta_v = total_delta_v;
             obj.upper_stage_mass = upper_stage_mass;
-            obj.number_launch_stages = number_stages;
+            obj.number_launch_stages = number_launch_stages;
+            obj.number_engines_per_stage = number_engines_per_stage;
+            obj.max_area_ratio = max_area_ratio;
+            obj.max_exit_area = max_exit_area;
             obj.fuel_species = fuel_species;
             obj.oxidizer_species = oxidizer_species;
             obj.mass_fuel_ratio = mass_fuel_ratio;

@@ -23,8 +23,10 @@ for i = 1:rocket.number_launch_stages+1
     nlines = 100;
     thi = 0.1 * pi/180;
 
-    [xw,yw,xcl,Mcl] = MinLenNozDes(r_t(i),Me(i),gamma(i),nlines,thi);
-    L_full(i) = xcl(end);
+    % [xw,yw,xcl,Mcl] = MinLenNozDes(r_t(i),Me(i),gamma(i),nlines,thi);
+    %L_full(i) = xcl(end);
+    L_full(i) = -1;
+
     % L15
 
     L15(i) = calculate_L15(Ae_At(i),r_t(i));
@@ -32,7 +34,9 @@ for i = 1:rocket.number_launch_stages+1
     fprintf("Enter correction factor below for engine %d." + ...
     " Expansion ratio: %3.1f, L15: %3.1f, Full: %3.1f\n", ...
     i,rocket.area_exit_ratio(i), L15(i), L_full(i));
-    rocket.correction_factor(i) = input("");
+    
+    %rocket.correction_factor(i) = input("");
+    rocket.correction_factor(i) = .99;
 
 end
 
@@ -43,15 +47,15 @@ end
 
 
 % Calculate Isp 
-T = T0.*(1+(gamma-1)/2*Me.^2).^(-1);
-a = sqrt(gamma.*R.*T./MW);
+T = T0.*(1+(gamma-1)/2.*Me.^2).^(-1);
+a = sqrt(gamma.*R.*T./MW*1000);
 ue = Me.*a;
-pe = p0.*(1+(gamma-1)/2*Me.^2).^(-gamma./(gamma-1));
-Ae = Ae_At*At;
+pe = p0.*(1+(gamma-1)/2.*Me.^2).^(-gamma./(gamma-1));
+Ae = Ae_At.*At;
 correction_factor = rocket.correction_factor;
 
-FT_vacuum = (m_dot.*ue - (pe-pa_vacuum).*Ae) .* correction_factor;
-FT_sea_level = (m_dot*ue - (pe-pa_sea_level).*Ae) .* correction_factor;
+FT_vacuum = (m_dot.*ue + (pe-pa_vacuum).*Ae) .* correction_factor;
+FT_sea_level = (m_dot.*ue + (pe-pa_sea_level).*Ae) .* correction_factor;
 Isp_vacuum = FT_vacuum./(m_dot.*g0);
 Isp_sea_level = FT_sea_level./(m_dot.*g0);
 

@@ -20,7 +20,7 @@ function rocket = quasi_1d(rocket)
         y = rocket.mixture_gamma(i); % gamma
         A_t = rocket.area_throat(i); % m2
         
-        exit_area_ratio = 1; % completely arbitrary, gets fixed in a couple lines
+        exit_area_ratio = 200; % completely arbitrary, gets fixed in a couple lines
         
         combustor_area_ratio = 1; % TODO: make sure this doesn't matter
     
@@ -28,8 +28,21 @@ function rocket = quasi_1d(rocket)
     
         % find area ratio based on perfect expansion pressure ratio
         M_e = find_mach_from_pressure_ratio(params.p0/p_a,y);
-        params.exit_area_ratio = calculate_area_ratio_from_Mach(M_e,y);
-        params = update_area(params);
+        tentative_area_ratio = calculate_area_ratio_from_Mach(M_e,y);
+
+        if tentative_area_ratio <= rocket.max_area_ratio
+            params.exit_area_ratio = tentative_area_ratio;
+            params = update_area(params);
+        end
+        
+
+        % tentative_A_e = params.exit_area_ratio * A_t;
+        % 
+        % if(tentative_A_e <= rocket.max_exit_area / rocket.number_engines_per_stage(i))
+        % 
+        % end
+
+        
         
         
         results = solve_nozzle(params);

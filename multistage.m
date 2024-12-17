@@ -89,17 +89,17 @@ function rocket = multistage(rocket)
     for i = 1:3
         prs(i) = (1-Rs(i)*e(i))/(Rs(i)-1);
     end
-    
-    for i = 1:3
-        prs(i) = (1-Rs(i)*e(i))/(Rs(i)-1);
-    end
+   
+
+
+
 
     % upper stage math
     
     dv_upper = rocket.total_delta_v(end);
     Isp_upper = rocket.specific_impulse_sea_level(end);
     m_pl_upper = rocket.upper_stage_mass;
-    e_upper = 0.067; % TODO: fix with real value
+    e_upper = fetch_e_from_dv(dv_upper); % TODO: fix with real value
     
     C = exp(-dv_upper/(Isp_upper*g0));
     
@@ -142,5 +142,11 @@ function rocket = multistage(rocket)
         e = [e1;e2;e3];
         
         %e = zeros(size(R)) + 0.04; % ?
+    end
+
+    function e = fetch_e_from_dv(x)
+        HCfit = [76.7767   -1.1191    0.0266];
+        %epsfunc_H2 = @(x)H2fit(1)*x.^H2fit(2)+H2fit(3); % H2 fuel
+        e = HCfit(1)*x.^HCfit(2)+HCfit(3);
     end
 end
