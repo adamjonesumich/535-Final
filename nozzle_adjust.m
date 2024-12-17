@@ -23,9 +23,9 @@ for i = 1:rocket.number_launch_stages+1
     nlines = 100;
     thi = 0.1 * pi/180;
 
-    % [xw,yw,xcl,Mcl] = MinLenNozDes(r_t(i),Me(i),gamma(i),nlines,thi);
-    %L_full(i) = xcl(end);
-    L_full(i) = -1;
+    [xw,yw,xcl,Mcl] = MinLenNozDes(r_t(i),Me(i),gamma(i),nlines,thi,1);
+    L_full(i) = xcl(end);
+    % L_full(i) = -1;
 
     % L15
 
@@ -35,8 +35,19 @@ for i = 1:rocket.number_launch_stages+1
     " Expansion ratio: %3.1f, L15: %3.1f, Full: %3.1f\n", ...
     i,rocket.area_exit_ratio(i), L15(i), L_full(i));
     
-    %rocket.correction_factor(i) = input("");
-    rocket.correction_factor(i) = .974;
+    rocket.correction_factor(i) = input("");
+    
+    fprintf("Enter percent chop of L15:\n");
+
+    l = L15 * input("");
+
+    % rocket.correction_factor(i) = .974;
+    y = rocket.mixture_gamma(i);
+    Ac_At = rocket.combustion_area_ratio(i);
+    p_c = rocket.ideal_chamber_pressure(i);
+    
+    % Calculate nozzle mass
+    rocket.nozzle_mass(i) = calculate_nozzle_mass_bell(xw,yw,At(i),p_c,Ac_At,l);
 
 end
 
@@ -65,6 +76,35 @@ rocket.thrust_sea_level = FT_sea_level;
 rocket.specific_impulse_vacuum = Isp_vacuum;
 rocket.specific_impulse_sea_level = Isp_sea_level;
 
+
+
+end
+
+function m = calculate_nozzle_mass_bell(xw,yw,A_t,p_c,Ac_At,l)
+    rho_c = 6000; %kg/m3
+    o_h = 50e6; %Pa
+    A_c = Ac_At * A_t;
+
+    t = p_c * sqrt(A_c/pi) / o_h;
+
+    in = ceil(l / xw(end) * length(xw));
+
+    m = rho_c * t * 2 * pi * trapz(xw(1:in),yw(1:in));
+
+end
+
+function m = calculate_nozzle_mass_L15(area_exit_ratio,A_t,p_c,Ac_At)
+    rho_c = 6000; %kg/m3
+    o_h = 50e6; %Pa
+    r_t = sqrt(A_t/pi);
+    theta = 15 * pi/180;
+    A_c = Ac_At * A_t;
+
+    t = p_c * sqrt(A_c/pi) / o_h;
+    L15 = calculate_L15(area_exit_ratio,A_t)*0.6;
+
+    % m = rho_c * ((2*pi*t*r_t-pi*t^2)*L15 + pi/2*tan(theta)*L15^2);
+    m = rho_c * pi * t * (L15*L15 * tan(theta)/cos(theta) - r_t*r_t/sin(theta));
 end
 
 

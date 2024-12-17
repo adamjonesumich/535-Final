@@ -13,7 +13,7 @@ function rocket = combustion_chamber(rocket)
         rocket.effective_chamber_pressure(i) = p_c * p0_p0_in;
         % calculate engine mass
         rocket.combustion_chamber_mass(i) = calculate_combustion_chamber_mass(A_t,p_c);
-        rocket.nozzle_mass(i) = calculate_nozzle_mass(Ae_At,A_t,p_c,Ac_At);
+        
     end
 
 end
@@ -25,19 +25,6 @@ function m = calculate_combustion_chamber_mass(A_t,p_c)
     m = A_t * p_c * 2 * rho_c * L_star / o_h;
 end
 
-function m = calculate_nozzle_mass(area_exit_ratio,A_t,p_c,Ac_At)
-    rho_c = 6000; %kg/m3
-    o_h = 50e6; %Pa
-    r_t = sqrt(A_t/pi);
-    theta = 15 * pi/180;
-    A_c = Ac_At * A_t;
-
-    t = p_c * sqrt(A_c/pi) / o_h;
-    L15 = calculate_L15(area_exit_ratio,A_t)*0.6;
-
-    % m = rho_c * ((2*pi*t*r_t-pi*t^2)*L15 + pi/2*tan(theta)*L15^2);
-    m = rho_c * pi * t * (L15*L15 * tan(theta)/cos(theta) - r_t*r_t/sin(theta));
-end
 
 function L = calculate_L15(area_exit_ratio,A_t)
     r_t = sqrt(A_t/pi);
