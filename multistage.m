@@ -53,7 +53,7 @@ function rocket = multistage(rocket)
             R_guess = R_min + (R_max-R_min)/2;
         end
         
-        Rs = [0;0;0];
+        Rs = [0,0,0];
         Rs(1) = R_guess;
         
         lambda = @(n) Rs(n)*(1 + e(n)) / (Isp(n) * g0 * ( 2 + Rs(n)*(1-3*e(n)) - Rs(n)^2*(e(n)^2-e(n)) ) );
@@ -80,12 +80,12 @@ function rocket = multistage(rocket)
     % calculate parameters based on finalized mass ratios and structural
     % coefficients
 
-    dvs = [0;0;0];
+    dvs = [0,0,0];
     for i = 1:3
         dvs(i) = Isp(i)*g0*log(Rs(i));
     end
     
-    prs = [0;0;0];
+    prs = [0,0,0];
     for i = 1:3
         prs(i) = (1-Rs(i)*e(i))/(Rs(i)-1);
     end
@@ -107,7 +107,7 @@ function rocket = multistage(rocket)
     m_s_upper = m_p_upper*(e_upper/(1-e_upper));
     
     m_upper = m_pl_upper+m_p_upper+m_s_upper;
-    ms = [0;0;0;m_upper];
+    ms = [0,0,0,m_upper];
     for i = 3:-1:1
         ms(i) = ms(i+1)*(prs(i)+1)/prs(i) + (rocket.combustion_chamber_mass(i) + rocket.nozzle_mass(i))  * rocket.number_engines_per_stage(i);
     end

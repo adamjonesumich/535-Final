@@ -3,20 +3,20 @@
 total_delta_v = [8000,9600]; % m/s
 upper_stage_mass = 5000; % kg
 number_launch_stages = 3; 
-number_engines_per_stage = [1, 1, 1, 1];
+%number_engines_per_stage = [1, 1, 1, 1];
+number_engines_per_stage = [5, 3, 1, 1];
 max_area_ratio = 200;
 max_exit_area = 40; % TBD
 fuel_species = "CH4";
 oxidizer_species = "O2";
-area_throat = [0.5, 0.05, 0.01, 0.01]; % m2
-area_throat = [0.05, 0.05, 0.01, 0.01]; % m2
 lowest_ambient_pressure = [0, 0, 0, 0]; % Pa
 
 % adjustables
-mass_fuel_ratio = [3.8, 3.8, 3.8, 3.8];
-highest_ambient_pressure = [101325, 10, 0, 0]; % Pa
-ideal_chamber_pressure = [60, 55, 30, 30] * 1e6; % Pa
-combustion_area_ratio = [2.5,2,1.5,1];
+area_throat = [0.063, 0.063, 0.063, 0.001]; % m2
+mass_fuel_ratio = [2.90, 2.95, 2.95, 2.97];
+highest_ambient_pressure = [101325, 0, 0, 0]; % Pa
+ideal_chamber_pressure = [49, 49, 49, 60] * 1e6; % Pa
+combustion_area_ratio = [2,1,1,1];
         
 
 % struct to hold data between function calls
@@ -33,4 +33,8 @@ rocket = combustion_chamber(rocket); % TODO: need to iterate to ensure convergen
 rocket = quasi_1d(rocket);
 rocket = nozzle_adjust(rocket);
 rocket = multistage(rocket);
+rocket.correction_factor = rocket.thrust_sea_level ./ (rocket.stage_masses * 9.81) - 1;
 
+delta_mass = rocket.stage_masses(1) - prev_mass;
+rocket.number_launch_stages = delta_mass;
+prev_mass = rocket.stage_masses(1);

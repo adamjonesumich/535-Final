@@ -35,8 +35,8 @@ function m = calculate_nozzle_mass(area_exit_ratio,A_t,p_c,Ac_At)
     t = p_c * sqrt(A_c/pi) / o_h;
     L15 = calculate_L15(area_exit_ratio,A_t)*0.6;
 
-    m = rho_c * ((2*pi*t*r_t-pi*t^2)*L15 * pi/2*tan(theta)*L15^2);
-    %m = rho_c * pi * t * (L15*L15 * tan(theta)/cos(theta) - r_t*r_t/sin(theta));
+    % m = rho_c * ((2*pi*t*r_t-pi*t^2)*L15 + pi/2*tan(theta)*L15^2);
+    m = rho_c * pi * t * (L15*L15 * tan(theta)/cos(theta) - r_t*r_t/sin(theta));
 end
 
 function L = calculate_L15(area_exit_ratio,A_t)
