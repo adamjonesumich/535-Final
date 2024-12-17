@@ -19,12 +19,18 @@ classdef Rocket
         highest_ambient_pressure % Pa
         % could change to be 
         % calculated somehow, or be a product of thrust
+        combustion_area_ratio
 
         % adjustable
         mass_fuel_ratio
         area_throat % m2
-        chamber_pressure % Pa
+        ideal_chamber_pressure % Pa
+        effective_chamber_pressure % Pa
         % ----------------------------------
+        
+        % combustion
+        combustion_chamber_mass
+        nozzle_mass
         
         % --------cantera outputs-----------
         chamber_temperature % K
@@ -55,7 +61,10 @@ classdef Rocket
     end
 
     methods
-        function obj = Rocket(total_delta_v,upper_stage_mass,number_launch_stages,number_engines_per_stage,max_area_ratio,max_exit_area,fuel_species,oxidizer_species,mass_fuel_ratio,area_throat,lowest_ambient_pressure,highest_ambient_pressure,chamber_pressure)
+        function obj = Rocket(total_delta_v,upper_stage_mass,number_launch_stages, ...
+                number_engines_per_stage,max_area_ratio,max_exit_area,fuel_species, ...
+                oxidizer_species,mass_fuel_ratio,area_throat,lowest_ambient_pressure, ...
+                highest_ambient_pressure,chamber_pressure,combustion_area_ratio)
             %Rocket Construct an instance of this class
             %   Detailed explanation goes here
             obj.total_delta_v = total_delta_v;
@@ -70,11 +79,16 @@ classdef Rocket
             obj.area_throat = area_throat;
             obj.lowest_ambient_pressure = lowest_ambient_pressure;
             obj.highest_ambient_pressure = highest_ambient_pressure;
-            obj.chamber_pressure = chamber_pressure;
+            obj.ideal_chamber_pressure = chamber_pressure;
+            obj.effective_chamber_pressure = chamber_pressure;
+            obj.combustion_area_ratio = combustion_area_ratio;
 
             obj.chamber_temperature = NaN;
             obj.mixture_molecular_weight = NaN;
             obj.mixture_gamma = NaN;
+            
+            obj.combustion_chamber_mass = NaN;
+            obj.nozzle_mass = NaN;
     
             obj.area_exit_ratio = NaN;
             obj.mass_flow_rate = NaN;

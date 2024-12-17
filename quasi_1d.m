@@ -13,7 +13,7 @@ function rocket = quasi_1d(rocket)
         % native sim variables
         num_points = 2; % throat + exit
         T0 = rocket.chamber_temperature(i); % K
-        p0 = rocket.chamber_pressure(i); % Pa
+        p0 = rocket.effective_chamber_pressure(i); % Pa
         p_a = rocket.highest_ambient_pressure(i); % Pa
         MW = rocket.mixture_molecular_weight(i); % g/mol
         MW = 1/1000 * MW; % kg/mol
