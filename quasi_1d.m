@@ -1,4 +1,4 @@
-function rocket = quasi_1d(rocket,is_first_pass)
+function rocket = quasi_1d(rocket,is_correction)
     % valid inputs: chamber_temperature, chamber_pressure, 
     % average_ambient_pressure, mixture_gamma, mixture_molecular_weight,
     % area_throat
@@ -19,20 +19,24 @@ function rocket = quasi_1d(rocket,is_first_pass)
         MW = 1/1000 * MW; % kg/mol
         y = rocket.mixture_gamma(i); % gamma
         A_t = rocket.area_throat(i); % m2
+        if ~is_correction
+            exit_area_ratio = rocket.max_area_ratio(i); % max expansion ratio
+        else
+            exit_area_ratio = rocket.area_exit_ratio(i);
+        end
         
-        exit_area_ratio = rocket.max_area_ratio; % max expansion ratio
-        
-        combustor_area_ratio = 1; % TODO: make sure this doesn't matter
+        combustor_area_ratio = rocket.combustion_area_ratio(i); % TODO: make sure this doesn't matter
     
         params = Quasi1DNozzleParameters(T0,p0,p_a,MW,y,A_t,exit_area_ratio,combustor_area_ratio,num_points);
+        if ~is_correction
+            % find area ratio based on perfect expansion pressure ratio
+            M_e = find_mach_from_pressure_ratio(params.p0/p_a,y);
+            tentative_area_ratio = calculate_area_ratio_from_Mach(M_e,y);
     
-        % find area ratio based on perfect expansion pressure ratio
-        M_e = find_mach_from_pressure_ratio(params.p0/p_a,y);
-        tentative_area_ratio = calculate_area_ratio_from_Mach(M_e,y);
-
-        if tentative_area_ratio <= rocket.max_area_ratio
-            params.exit_area_ratio = tentative_area_ratio;
-            params = update_area(params);
+            if tentative_area_ratio <= rocket.max_area_ratio(i)
+                params.exit_area_ratio = tentative_area_ratio;
+                params = update_area(params);
+            end
         end
         
 
@@ -45,10 +49,27 @@ function rocket = quasi_1d(rocket,is_first_pass)
         
         
         
-        results = solve_nozzle(params);
-        rocket.area_exit_ratio(i) = params.exit_area_ratio;
-        rocket.mass_flow_rate(i) = results.mdot;
-        rocket.exit_mach_number(i) = results.M_x(end);
+        if is_correction
+            params.p_a = 0;
+            results = solve_nozzle(params);
+            rocket.thrust_vacuum(i) = results.thrust;
+            rocket.specific_impulse_vacuum(i) = results.Isp;
+            if(i ~= 1)
+                rocket.exit_mach_number(i) = results.M_x(end);
+            end
+            params.p_a = 101325;
+            results = solve_nozzle(params);
+            rocket.thrust_sea_level(i) = results.thrust;
+            rocket.specific_impulse_sea_level(i) = results.Isp;
+            if(i == 1)
+                rocket.exit_mach_number(i) = results.M_x(end);
+            end
+        else
+            results = solve_nozzle(params);
+            rocket.area_exit_ratio(i) = params.exit_area_ratio;
+            rocket.mass_flow_rate(i) = results.mdot;
+            rocket.exit_mach_number(i) = results.M_x(end);
+        end
     end
 end
 

@@ -23,7 +23,9 @@ for i = 1:rocket.number_launch_stages+1
     nlines = 100;
     thi = 0.1 * pi/180;
 
-    [xw,yw,xcl,Mcl] = MinLenNozDes(r_t(i),Me(i),gamma(i),nlines,thi,1);
+    [xw,yw,xcl,Mcl] = MinLenNozDes(r_t(i),Me(i),gamma(i),nlines,thi,0);
+    
+
     L_full(i) = xcl(end);
     %L_full(i) = -1;
 
@@ -39,7 +41,23 @@ for i = 1:rocket.number_launch_stages+1
     
     fprintf("Enter percent chop of L15:\n");
 
-    l = L15 * input("");
+    l = L15(i) * input("");
+
+    figure;
+    hold on;
+    plot(xw(1:end)*xcl(end)/xw(end),  yw(1:end)*xcl(end)/xw(end),'k-','LineWidth',3) 
+    plot(xw(1:end)*xcl(end)/xw(end), -yw(1:end)*xcl(end)/xw(end),'k-','LineWidth',3)
+    xlim([0,l])
+    ylim([-l,l])
+
+    if i == 4
+        plot([0; 0.5], [-l+0.2; -l+0.2], '-k', 'LineWidth', 2)
+        text(0.25,-l+0.4, '0.5m', 'HorizontalAlignment','center')
+    else 
+        plot([0; 1], [-l+0.2; -l+0.2], '-k', 'LineWidth', 2)
+        text(0.5,-l+0.4, '1m', 'HorizontalAlignment','center')
+    end
+
 
     % rocket.correction_factor(i) = .974;
     Ac_At = rocket.combustion_area_ratio(i);

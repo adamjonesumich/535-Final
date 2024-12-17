@@ -3,7 +3,7 @@
 total_delta_v = [8000,9600]; % m/s
 upper_stage_mass = 5000; % kg
 number_launch_stages = 3; 
-max_area_ratio = 200;
+max_area_ratio = [200,200,200,200];
 max_exit_area = 40; % TBD
 fuel_species = "CH4";
 oxidizer_species = "O2";
@@ -34,10 +34,10 @@ rocket = Rocket(total_delta_v,upper_stage_mass,number_launch_stages, ...
 % solve!
 
 rocket = cantera(rocket);
-rocket = quasi_1d(rocket,true);
 rocket = combustion_chamber(rocket); % TODO: need to iterate to ensure convergence of gamma and exit area ratio
 rocket = quasi_1d(rocket,false);
 rocket = nozzle_adjust(rocket);
+rocket = quasi_1d(rocket,true);
 rocket = multistage(rocket);
 
 % rocket.correction_factor = rocket.thrust_sea_level ./ (rocket.stage_masses * 9.81) - 1;

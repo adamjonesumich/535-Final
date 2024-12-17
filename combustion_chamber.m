@@ -4,8 +4,8 @@ function rocket = combustion_chamber(rocket)
         % account for Rayleigh losses
         y = rocket.mixture_gamma(i);
         Ac_At = rocket.combustion_area_ratio(i);
-        Ae_At = rocket.area_exit_ratio(i);
         A_t = rocket.area_throat(i);
+        
         M_c = Mach_from_area(Ac_At,y,true);
         p0_p0_in = rayleigh_loss(M_c,y);
         p_c = rocket.ideal_chamber_pressure(i);
@@ -25,14 +25,6 @@ function m = calculate_combustion_chamber_mass(A_t,p_c)
     m = A_t * p_c * 2 * rho_c * L_star / o_h;
 end
 
-
-function L = calculate_L15(area_exit_ratio,A_t)
-    r_t = sqrt(A_t/pi);
-    r_e = 0.4 * r_t; % rule of thumb
-    theta = 15 * pi/180;
-    L = ( r_t * ( area_exit_ratio ^ 0.5 - 1) + r_e * (1 / cos(theta) - 1) ) / tan(theta);
-
-end
 
 function p0_p0_in = rayleigh_loss(M,y)
     p0_p0_in = (1+(y-1)/2 * M.^2).^(y/(y-1)) / (1 + y * M.^2);
