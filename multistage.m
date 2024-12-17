@@ -98,7 +98,7 @@ function rocket = multistage(rocket)
     
     dv_upper = rocket.total_delta_v(end);
     Isp_upper = rocket.specific_impulse_sea_level(end);
-    m_pl_upper = rocket.upper_stage_mass;
+    m_pl_upper = rocket.upper_stage_mass + rocket.combustion_chamber_mass(end) + rocket.nozzle_mass(end);
     e_upper = fetch_e_from_dv(dv_upper); % TODO: fix with real value
     
     C = exp(-dv_upper/(Isp_upper*g0));
@@ -109,7 +109,7 @@ function rocket = multistage(rocket)
     m_upper = m_pl_upper+m_p_upper+m_s_upper;
     ms = [0;0;0;m_upper];
     for i = 3:-1:1
-        ms(i) = ms(i+1)*(prs(i)+1)/prs(i);
+        ms(i) = ms(i+1)*(prs(i)+1)/prs(i) + rocket.combustion_chamber_mass(i) + rocket.nozzle_mass(i);
     end
 
     rocket.stage_payload_ratios = prs;

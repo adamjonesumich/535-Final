@@ -21,7 +21,7 @@ end
 function m = calculate_combustion_chamber_mass(A_t,p_c)
     rho_c = 6000; %kg/m3
     o_h = 50e6; %Pa
-    L_star = 115; 
+    L_star = .115; 
     m = A_t * p_c * 2 * rho_c * L_star / o_h;
 end
 
