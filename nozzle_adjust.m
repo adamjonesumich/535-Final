@@ -6,8 +6,8 @@ m_dot = rocket.mass_flow_rate;
 p0 = rocket.effective_chamber_pressure;
 Me = rocket.exit_mach_number;
 gamma = rocket.mixture_gamma;
-pa_vacuum = rocket.lowest_ambient_pressure;
-pa_sea_level = rocket.highest_ambient_pressure;
+pa_vacuum = [0,0,0,0];
+pa_sea_level = [1,1,1,1] * 101325;
 MW = rocket.mixture_molecular_weight;
 T0 = rocket.chamber_temperature;
 Ae_At = rocket.area_exit_ratio;
@@ -25,7 +25,7 @@ for i = 1:rocket.number_launch_stages+1
 
     [xw,yw,xcl,Mcl] = MinLenNozDes(r_t(i),Me(i),gamma(i),nlines,thi,1);
     L_full(i) = xcl(end);
-    % L_full(i) = -1;
+    %L_full(i) = -1;
 
     % L15
 
@@ -47,7 +47,7 @@ for i = 1:rocket.number_launch_stages+1
     
     % Calculate nozzle mass
     rocket.nozzle_mass(i) = calculate_nozzle_mass_bell(xw,yw,At(i),p_c,Ac_At,l);
-
+    %rocket.nozzle_mass(i) = calculate_nozzle_mass_L15(Ae_At(i),At(i),p_c,Ac_At);
 end
 
 
@@ -69,7 +69,7 @@ FT_sea_level = (m_dot.*ue + (pe-pa_sea_level).*Ae) .* correction_factor;
 Isp_vacuum = FT_vacuum./(m_dot.*g0);
 Isp_sea_level = FT_sea_level./(m_dot.*g0);
 
-% Set rocket Isp
+% Set rocket performance
 rocket.thrust_vacuum = FT_vacuum;
 rocket.thrust_sea_level = FT_sea_level;
 rocket.specific_impulse_vacuum = Isp_vacuum;

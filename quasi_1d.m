@@ -1,4 +1,4 @@
-function rocket = quasi_1d(rocket)
+function rocket = quasi_1d(rocket,is_first_pass)
     % valid inputs: chamber_temperature, chamber_pressure, 
     % average_ambient_pressure, mixture_gamma, mixture_molecular_weight,
     % area_throat
@@ -20,7 +20,7 @@ function rocket = quasi_1d(rocket)
         y = rocket.mixture_gamma(i); % gamma
         A_t = rocket.area_throat(i); % m2
         
-        exit_area_ratio = 200; % completely arbitrary, gets fixed in a couple lines
+        exit_area_ratio = rocket.max_area_ratio; % max expansion ratio
         
         combustor_area_ratio = 1; % TODO: make sure this doesn't matter
     
@@ -47,8 +47,6 @@ function rocket = quasi_1d(rocket)
         
         results = solve_nozzle(params);
         rocket.area_exit_ratio(i) = params.exit_area_ratio;
-        rocket.specific_impulse_sea_level(i) = results.Isp;
-        rocket.thrust_sea_level(i) = results.thrust;
         rocket.mass_flow_rate(i) = results.mdot;
         rocket.exit_mach_number(i) = results.M_x(end);
     end

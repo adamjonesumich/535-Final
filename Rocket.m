@@ -15,10 +15,7 @@ classdef Rocket
         max_exit_area
         fuel_species
         oxidizer_species
-        lowest_ambient_pressure % Pa 
         highest_ambient_pressure % Pa
-        % could change to be 
-        % calculated somehow, or be a product of thrust
         combustion_area_ratio
 
         % adjustable
@@ -57,13 +54,15 @@ classdef Rocket
         stage_mass_ratios
         stage_masses % kg
         stage_delta_vs % m/s
+        final_thrust % N
+        initial_net_gs
         % ----------------------------------
     end
 
     methods
         function obj = Rocket(total_delta_v,upper_stage_mass,number_launch_stages, ...
                 number_engines_per_stage,max_area_ratio,max_exit_area,fuel_species, ...
-                oxidizer_species,mass_fuel_ratio,area_throat,lowest_ambient_pressure, ...
+                oxidizer_species,mass_fuel_ratio,area_throat, ...
                 highest_ambient_pressure,chamber_pressure,combustion_area_ratio)
             %Rocket Construct an instance of this class
             %   Detailed explanation goes here
@@ -77,7 +76,6 @@ classdef Rocket
             obj.oxidizer_species = oxidizer_species;
             obj.mass_fuel_ratio = mass_fuel_ratio;
             obj.area_throat = area_throat;
-            obj.lowest_ambient_pressure = lowest_ambient_pressure;
             obj.highest_ambient_pressure = highest_ambient_pressure;
             obj.ideal_chamber_pressure = chamber_pressure;
             obj.effective_chamber_pressure = chamber_pressure;
@@ -104,6 +102,8 @@ classdef Rocket
             obj.stage_mass_ratios = NaN;
             obj.stage_masses = NaN;
             obj.stage_delta_vs = NaN;
+            obj.final_thrust = NaN;
+            obj.initial_net_gs = NaN;
         end
 
     end
